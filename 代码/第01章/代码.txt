@@ -1,0 +1,13 @@
+1.1.3
+$rootScope.delegate = {
+  alert: (obj) => mnAlertDelegate.show(obj),
+  login: () => $state.go('stLogin'),
+  message: (msg) => mnMessageDelegate.show(msg)
+};
+// �޸ĳ�
+$rootScope.delegate = {
+  alert: (obj) => mnAlertDelegate.show(obj),
+};
+$rootScope.login = {
+  login: () => $state.go('stLogin')
+}
