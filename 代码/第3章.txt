@@ -1,0 +1,61 @@
+3.2.1
+
+// 原有逻辑
+var startTime = st || new Date()
+var endTime = et || new Date()
+// 遵循DRY原则，抽象公共函数now
+var now = function(date) {
+  return date || new Date()
+}
+var startTime = now(st)
+var endTime = now(et)
+
+// 修改startTime赋值
+var startTime = new Date(1)
+var endTime = et || new Date()
+
+// 修改公共函数now
+var now = function(date, param) {
+  return date || param ? new Date(param) : new Date()
+}
+var startTime = now(null, param)
+var endTime = now(et)
+
+3.2.2
+
+const deletes$ = (key: string[]) => {
+  const s3subject = new Subject();
+  this.s3.deleteObjects(
+    {
+      Bucket: this.bucket,
+      Delete: { Objects: key },
+    });
+  return s3subject;
+}
+const delete$ = (key: string) => {
+  const s3subject = new Subject();
+  this.s3.deleteObject(
+    {
+      Bucket: this.bucket,
+      Key: key
+    });
+  return s3subject;
+}
+
+const delete$ = (key: string[] | string) => {
+  const s3subject = new Subject();
+  let param = {Bucket: this.bucket}
+  if(key typeof === 'string') {
+    param.Key = key
+  } else {
+    param.Delete = { Objects: key }
+  }
+  this.s3.deleteObjects(param);
+  return s3subject;
+}
+
+const delete$ = (arg: {Key: string} | {Delete: {Objects: string[]}}) => {
+  const s3subject = new Subject();
+  this.s3.deleteObjects({Bucket: this.bucket, ...arg});
+  return s3subject;
+}

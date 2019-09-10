@@ -1,0 +1,433 @@
+21.1.1
+
+// app.js
+// 引用http模块
+const http = require('http')
+// 创建服务端
+http.createServer((req, res) => {
+  // 响应字符串
+  res.end('Hello world')
+})
+// 监听80端口，输出启动日志
+.listen(80, () => console.log('Listen on 80...'))
+
+21.1.2
+
+// app.js
+// 引用http模块
+const http = require('http')
+// 创建服务端
+http.createServer((req, res) => {
+  // 解构获取URL，请求方法，头部对象
+  const {url, method, headers} = req
+  // 请求头部对象并字符串化
+  const header = JSON.stringify(headers, null, 2)
+  // 响应请求信息
+  res.end(`
+    url: ${url}
+    method: ${method}
+    header: ${header}
+  `)
+})
+// 监听80端口，输出启动日志
+.listen(80, () => console.log('Listen on 80...'))
+
+
+// app.js
+// 引用http模块
+const http = require('http')
+// 创建服务端
+http.createServer((req, res) => {
+  // 解构获取URL，请求方法，头部对象
+  const {url, method, headers} = req
+  // 请求头部对象并字符串化
+  const header = JSON.stringify(headers, null, 2)
+  // 请求体
+  let body = ''
+  // 监听请求发送请求体
+  req.on('data', chunk => {
+    // 获取请求体数据
+    body += chunk
+  })
+  // 请求发送结束
+  req.on('end', () => {
+    // 响应请求信息
+    res.end(`
+      url: ${url}
+      method: ${method}
+      header: ${header}
+      body: ${body}
+    `)
+  })
+})
+// 监听80端口，输出启动日志
+.listen(80, () => console.log('Listen on 80...'))
+
+21.2.1
+
+http.createServer((req, res) => {
+  // ...
+  res.statusCode = 200
+  res.statusMessage = ‘OK’
+  // ...
+})
+
+21.2.2.
+
+res.setHeader(‘Content-Type’, ‘text/html’)
+res.writeHead(200, ‘OK’, {
+  ‘Content-Length’: 10,
+  ‘Content-type’: ‘text/html’
+})
+
+21.2.3
+
+// app.js
+// 引用http模块
+const http = require('http')
+// 创建服务端
+http.createServer((req, res) => {
+  // 解构获取URL，请求方法，头部对象
+  const {url, method, headers} = req
+  // 请求体
+  let body = ''
+  // 监听请求发送请求体
+  req.on('data', chunk => {
+    // 获取请求体数据
+    body += chunk
+  })
+  // 请求发送结束
+  req.on('end', () => {
+    // 设置请求头部，返回内容为json
+    res.setHeader('Content-Type', 'application/json')
+    // 设置状态信息
+    res.writeHeader(200, 'GOOD')
+    // 响应请求信息
+    res.write(JSON.stringify({
+      url,
+      method,
+      headers,
+      body
+    }))
+    // 发送请求
+    res.end()
+  })
+})
+// 监听80端口，输出启动日志
+.listen(80, () => console.log('Listen on 80...'))
+
+21.3
+
+// 引用url模块的parse函数以及URL构造类
+const {parse, URL} = require('url')
+// URL字符串
+const urlString = 'http://localhost?name=yalishizhude'
+// 生成WHATWG URL实例，官方推荐
+const url = new URL(urlString)
+// 旧的解析URL字符串的方式，将弃用
+// const url = parse(urlString)
+
+// controller.js
+let ctrl = {}
+/**
+ * 返回请求信息
+ * @param {httpRequest} req 请求实例
+ * @param {httpResponse} res 响应实例
+ */
+ctrl.getRequest = (req, res) => {
+  // 解构获取URL，请求方法，头部对象
+  const {url, method, headers, body} = req
+  // 设置请求头部，返回内容为json
+  res.setHeader('Content-Type', 'application/json')
+  // 设置状态信息
+  res.writeHeader(200, 'GOOD')
+  // 响应请求信息
+  res.write(JSON.stringify({
+    url,
+    method,
+    headers,
+    body
+  }))
+  // 发送请求
+  res.end()
+}
+/**
+ * 返回部分请求信息
+ * @param {httpRequest} req 请求实例
+ * @param {httpResponse} res 响应实例
+ * @param {Object} param 参数对象（路由参数和请求参数）
+ */
+ctrl.getPart = (req, res) => {
+  // 设置请求头部，返回内容为json
+  res.setHeader('Content-Type', 'application/json')
+  switch(req.pathParam.part) {
+    case 'url': // 返回请求URL
+      res.end(JSON.stringify({
+        url: req.url
+      }))
+      break;
+    case 'header': // 返回请求头部
+      res.end(JSON.stringify(req.headers))
+      break;
+    case 'body': // 返回请求主体
+      res.end(JSON.stringify({
+        body: req.body
+      }))
+      break;
+    default: // 未匹配参数信息，继续其他操作
+      return true
+  }
+}
+/**
+ * 未找到匹配路径
+ * @param {httpRequest} req 请求实例
+ * @param {httpResponse} res 响应实例
+ */
+ctrl.notFound = (req, res) => {
+  // 设置状态信息
+  res.writeHeader(404, 'Not found')
+  // 发送请求
+  res.end()
+}
+module.exports = ctrl
+
+// router.js
+/* 
+ * 引用处理逻辑
+ * notFound(req, res)：未找到匹配请求路径
+ * getRequest(req, res)：返回请求信息
+ * getPart(req, res, param)：返回请求部分信息
+*/
+const {notFound, getRequest, getPart} = require('./controller')
+// 配置路由规则以及对应的处理函数
+const RULE_LIST = {
+  "/": getRequest, // 返回整个请求信息
+  "/:part": getPart, // 返回请求部分信息
+  "*": notFound // 404处理
+}
+/**
+ * 根据路由规则生成正则表达式
+ * @param {string} rule 路由规则
+ */
+const genReg = rule => {
+  let reg = ''
+  if(rule.indexOf('/')>-1) {
+    // 正则表达式数组
+    let regList = []
+    // 占位符替换成正则表达式
+    rule.split('/').forEach(str => {
+      regList.push(str===''?'':str.replace(/\:(.*)/, '([^\\/]+?)').replace('*', '\\*'))
+    })
+    // 拼接路由规则正则表达式字符串
+    reg = '^' + regList.join('\\/') + '(?:\\/)?$' 
+  } else { // 任意路径匹配
+    reg = '.*'
+  }
+  return new RegExp(reg)
+}
+// 路由解析函数
+const parse = (req, res) => {
+  // 获取URL字符串
+  const path = req.url
+  // 获取请求路径和请求字符串，请求字符串默认为空字符串
+  const [pathName, search=''] = path.split('?')
+  // 路由参数
+  let pathParam = {}
+  // 请求参数
+  let searchParam = {}
+  // 请求体
+  let body = ''
+  // 监听请求发送请求体
+  req.on('data', chunk => {
+    // 获取请求体数据
+    body += chunk
+  })
+  // 请求体接收结束，开始解析路由
+  req.on('end', () => {
+    // 将请求字符串转换为对象
+    search.split('&').forEach(str => {
+      const [key, value=''] = str.split('=')
+      searchParam[key] = value
+    })
+    // 逐个匹配路由解析规则
+    for(let rule in RULE_LIST) {
+      // 根据正则表达式进行匹配
+      if (genReg(rule).test(pathName)) {
+        // 解析路由参数
+        rule.split('/').forEach((str, idx) => {
+          if(str.indexOf(':')===0) {
+            pathParam[str.replace(':', '')] = pathName.split('/')[idx]
+          }
+        })
+        // 执行路由规则对应的函数
+        let fn = RULE_LIST[rule] || function() { return true }
+        let toContinue = fn(Object.assign({body, pathParam, searchParam}, req), res)
+        // 是否继续匹配其他路由
+        if (!toContinue)  break;
+      }
+    }
+  })
+}
+module.exports = parse
+
+// app.js
+// 引用http模块
+const http = require('http')
+const router = require('./router')
+// 创建服务端
+http.createServer(router)
+// 监听80端口，输出启动日志
+.listen(80, () => console.log('Listen on 80...')
+
+21.4.1
+
+const fs = require(‘fs’) 
+// 异步读写文件
+fs.readFile(path, callback)
+fs.writeFile(path, callback)
+// 同步读写文件
+fs.readFileSync(path) 
+fs.writeFileSync(path)
+
+// router.js
+/* 
+ * 引用处理逻辑
+ * notFound(req, res)：未找到匹配请求路径
+ * getRequest(req, res)：返回请求信息
+ * getPart(req, res, param)：返回请求部分信息
+ * getAppP(req, res): 返回app.js文件
+*/
+const {notFound, getRequest, getPart, getApp} = require('./controller')
+// 配置路由规则以及对应的处理函数
+const RULE_LIST = {
+  "/app.js": getApp,
+  "/": getRequest, // 返回整个请求信息
+  "/:part": getPart, // 返回请求部分信息
+  "*": notFound // 404处理
+}
+
+/**
+ * 返回app.js文件
+ * @param {httpRequest} req 请求实例
+ * @param {httpResponse} res 响应实例
+ */
+ctrl.getApp = (req, res) => {
+  // 设置响应体内容类型为javascript文本文件
+  res.setHeader('content-type', 'text/javascript')
+  // 读取app.js文件
+  fs.readFile('./app.js', (err, buf) => {
+    // 捕获抛出异常
+    if(err) throw err
+    // 响应文件buffer
+    res.end(buf)
+  })
+}
+
+21.4.2
+
+// controller.js
+const mysql = require('mysql')
+// 创建连接
+let con = mysql.createConnection({
+  host: 'node-db', // 数据库域名
+  user: 'root', // 数据库用户名
+  password: 'mysql', // 数据库用户密码
+  database: 'mysql' // 需要连接的数据库名
+})
+// 开始连接
+con.connect()
+
+/**
+ * 返回数据库db表的Db字段值
+ * @param {httpRequest} req 请求实例
+ * @param {httpResponse} res 响应实例
+ */
+ctrl.getDb = (req, res) => {
+  con.query('select db from db', (err, results, fields) => {
+    if(err) throw err;
+    res.end(JSON.stringify(results))
+  })
+}
+
+/* 
+ * 引用处理逻辑
+ * notFound(req, res)：未找到匹配请求路径
+ * getRequest(req, res)：返回请求信息
+ * getPart(req, res, param)：返回请求部分信息
+ * getApp(req, res): 返回app.js文件
+ * getDb(req, res): 返回数据库db表的db字段值
+*/
+const {notFound, getRequest, getPart, getApp, getDb} = require('./controller')
+// 配置路由规则以及对应的处理函数
+const RULE_LIST = {
+  "/app.js": getApp,
+  "/": getRequest, // 返回整个请求信息
+  "/:part": getPart, // 返回请求部分信息
+  "/db": getDb, // 返回数据库信息
+  "*": notFound // 404处理
+}
+
+21.4.3
+
+// controller.js
+/**
+ * 向GitHub的API服务器发送请求，查询用户信息
+ * @param {httpRequest} req 请求实例
+ * @param {httpResponse} res 响应实例
+ */
+ctrl.getUser = (req, res) => {
+  // 存储Github响应的数据
+  let data = ''
+  // 解析URL请求参数
+  const {q} = querystring.parse(req.url.split('?')[1]||'')
+  // 请求参数
+  const option = {
+    hostname:'api.github.com', // GitHub的API服务器域名
+    port: 443, // HTTPS协议的默认端口
+    path: '/search/users?q='+q, // 请求路径以及请求参数
+    method: 'GET', // 请求方法
+    headers: { // 模拟Chrome浏览器的头部信息
+      'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+    }
+  }
+  // 创建HTTPS请求
+  const request = https.request(option, socket => {
+    // 接收请求响应的数据
+    socket.on('data', chunk => {
+      // 拼接数据
+      data += chunk
+    })
+    // 请求响应完成
+    socket.on('end', () => {
+      // 返回数据给浏览器
+      res.end(data)
+    }) 
+  })
+  // 捕获请求中的异常
+  request.on('error', e => {
+    throw e
+  })
+  // 请求发送完成
+  request.end() 
+}
+
+// router.js
+/* 
+ * 引用处理逻辑
+ * notFound(req, res)：未找到匹配请求路径
+ * getRequest(req, res)：返回请求信息
+ * getPart(req, res, param)：返回请求部分信息
+ * getApp(req, res): 返回app.js文件
+ * getDb(req, res): 返回数据库db表的db字段值
+ * getuser(req, res): 查询GitHub的API服务器，获取用户信息
+*/
+const {notFound, getRequest, getPart, getApp, getDb, getUser} = require('./controller')
+// 配置路由规则以及对应的处理函数
+const RULE_LIST = {
+  "/app.js": getApp,
+  "/": getRequest, // 返回整个请求信息
+  "/:part": getPart, // 返回请求部分信息
+  "/db": getDb, // 返回数据库信息
+  "/user": getUser,
+  "*": notFound // 404处理
+}

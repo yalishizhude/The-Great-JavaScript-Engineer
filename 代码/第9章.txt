@@ -1,0 +1,79 @@
+9.1.1
+
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/foo',
+      component: Foo,
+      name: 'foo',
+      children: [
+        {
+          path: 'bar',
+          component: Bar,
+          name: 'bar'
+        }
+      ]
+    }
+  ]
+})
+
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/index"
+  ]
+}
+
+9.1.2
+
+<!-- WXML中通过navigator组件实现跳转 -->
+<navigator url="/page/test?id=1">跳转到新页面</navigator>
+     
+// JavaScript中使用API函数跳转
+wx.navigateTo({
+  url: '/page/test?id=1'
+})
+wx.redirectTo({
+  url: '/page/test?id=1'
+})
+
+{
+ "tabBar": {
+    "list": [{
+      "pagePath": "pages/index/index",
+      "text": "首页"
+    }, {
+      "pagePath": "pages/logs/logs",
+      "text": "日志"
+    }]
+  }
+}
+
+<navigator open-type=”navigate” url="/page/test?id=1">对应wx.navigateTo</navigator>
+<navigator open-type=”redirect” url="/page/test?id=1">对应wx.redirectTo</navigator>
+<navigator open-type=”switchTab” url="/page/test?id=1">对应wx.switchTab</navigator>
+
+9.2.2
+
+<!--custom-ul.wxml-->
+<text bindtap="myclick">{{text}}</text>
+
+// custom-ul.js
+Component({
+  properties: {
+
+    text: String
+  },
+  methods: {
+    let myEventDetail = {} // detail对象，提供给事件监听函数
+    let myEventOption = {} // 触发事件的选项
+    this.triggerEvent('hello', myEventDetail, myEventOption)
+  }
+}
+
+<!-- index.wxml -->
+<!-- 传递字符串参数"zdl"，绑定组件事件"hello"，当"hello"事件触发时调用父页面的"bindViewTap"事件 -->
+<custom-ul text="zdl" bindhello="bindViewTap"></custom-ul>
+
+
+

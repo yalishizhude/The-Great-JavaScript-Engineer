@@ -1,0 +1,156 @@
+4.2.2
+var module1 = function(){
+  // 模块内部逻辑
+  function hello(){
+    console.log('Hello World');
+  }
+  // 模块导出接口
+  return {
+    hello: hello
+  }
+}()
+
+module1.hello();
+
+var Mod = function() {
+  // 模块内部逻辑
+  functin hello() {
+Console.log(‘Hello world’);
+  }
+  // 导出模块接口
+  return {
+hello: hello
+  }
+}
+
+var module2 = new Mod();
+module2.hello();
+
+4.2.3
+
+define('myModule', ['moduleA', 'moduleB'], function(a, b) {
+  // 变量a表示模块moduleA的引用, 变量b表示模块moduleB的引用
+  // 模块内部逻辑...
+  // 导出模块接口
+  return {
+func: function() {
+  //...
+}, 
+    pa: a.xxx,
+    pb: b.xxx
+  };
+});
+
+define('moduleB', ['moduleA'], function(a) {
+  // ...
+});
+
+require.config({
+  // ...
+  shim: {
+    "moduleB": {
+      "deps": ["moduleA"]
+    }
+  }
+});
+
+4.2.4
+
+define('myModule', function(require, exports, module) {
+  var a = require('moduleA')
+  var b = require('moduleB')
+  exports.func = function() {
+//...
+  }
+  exports.pa = a.xxx;
+  exports.pb = b.xxx;
+});
+/* 等价于
+define('myModule', function(require, exports, module) {
+  var a = require('moduleA')
+  var b = require('moduleB')
+  return {
+func: function() {
+  //...
+}, 
+    pa: a.xxx,
+    pb: b.xxx
+  };
+});
+*/
+
+define('myModule', function(require, exports, module) {
+  // 异步加载多个模块，在加载完成时，执行回调
+  require.async(['moduleA', 'moduleB'], function(a, b) {
+exports.func = function() {
+  //...
+};
+    exports.pa = a.xxx;
+    exports.pb = b.xxx;
+  });
+});
+
+4.2.5
+
+var a = require('moduleA');
+var b = require('moduleB');
+exports.func = function() {
+  //...
+};
+exports.pa = a.xxx;
+exports.pb = b.xxx;
+
+4.2.6
+
+(function (root, factory) {
+  // AMD
+  if (typeof define === 'function' && define.amd) {
+    // 声明为匿名模块
+    define(['moduleA', 'moduleB'], factory);
+    // CommonJS
+  } else if (typeof module === 'object' && module.exports) {
+    // 导出模块
+    module.exports = factory(require('moduleA'), require('moduleB'));
+  } else {
+    // 导出到浏览器的全局对象window
+    root.myModule = factory(root.moduleA, root.moduleB);
+  }
+}(this, function (a, b) {
+  return {
+    func: function(){
+      //...
+    },
+    pa: a.xxx,
+    pb: b.xxx
+  };
+}));
+
+;(function() {
+  // lodash逻辑
+  // ...
+  if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
+    root._ = _;
+    define(function() {
+      return _;
+    });
+  }else if (freeModule) {
+    (freeModule.exports = _)._ = _;
+    freeExports._ = _;
+  }
+  else {
+    root._ = _;
+  }
+}.call(this));
+
+4.3
+
+// 引用moduleA整个模块
+import a from 'moduleA';
+// 引用moduleB模块的xxx属性
+import {xxx} from 'moduleB';
+var func = function() {
+  //...
+};
+var pa = a.xxx;
+// 导出包含func、pa、pb属性的对象
+export {func, pa, xxx as pb};

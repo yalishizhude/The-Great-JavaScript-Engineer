@@ -1,0 +1,709 @@
+2.1.1
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+  </head>
+  <body>
+    <p>hello DOM</p>
+    <ul>
+      <li>first</li>
+      <li>second</li>
+      <li class="last">last</li>
+    </ul>
+  </body>
+</html>
+
+body { font-size: 12px }
+p { font-weight: light }
+span { color: blue }
+p span { display: none }
+
+<style>
+div p span.last {
+  color: red;
+}
+</style>
+<div class=”wrap last”>
+  <p><span>first</span><span>item</span></p>
+  <p><span>second</span><span>item</span></p>
+  <p><span>last</span><span class="last">item</span></p>
+</div>
+
+<style>
+div p.last span {
+  color: red;
+}
+</style>
+<div class=”wrap last”>
+  <p><span>first</span><span>item</span></p>
+  <p><span>second</span><span>item</span></p>
+  <p><span class="last">last</span><span>item</span></p>
+</div>
+
+<script>
+document.querySelector('button').addEventListener('click', () => {
+document.querySelector('style').innerHTML += 'p{margin: 5px;}';
+});
+</script>
+
+<script>
+document.querySelector('button').addEventListener('click', () => {
+document.querySelector('style').innerHTML += 'p{color: blue;}';
+});
+</script>
+
+<script>
+document.querySelector('button').addEventListener('click', () => {
+document.querySelector('style').innerHTML += 'p{font-size: 20px;}';
+});
+</script>
+
+2.3.2
+
+var compiled = _.template("hello: <%= name %>");
+compiled({name: 'moe'});
+
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>My Site</h1>
+  <footer id="footer">
+    <p>Copyright (c) foobar</p>
+  </footer>
+</body>
+</html>
+
+//- index.pug
+doctype html
+html
+  body
+    h1 My Site
+include includes/foot.pug
+
+//- includes/foot.pug
+footer#footer
+  p Copyright (c) foobar
+
+<!-- foot.ftl -->
+<footer id="footer">
+  <p>Copyright (c) foobar</p>
+</footer>
+
+<!-- index.flt -->
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>My Site</h1>
+  <#include "/common/copyright.ftl">
+</body>
+</html>
+
+<#list 1..5>
+  <ul>
+    <#items as num>
+      <li>${num}</li>
+    </#items>
+  </ul>
+</#list>
+
+// article.pug
+mixin article(title, content)
+  div
+    h1= title
+p= content
+// index.pug
+include article.pug
++article("hello", "world")
+
+// article.ftl
+<#marco article title content>
+<div>
+  <h1>${title!""}</h1>
+  <p>${content!""}</p>
+</div>
+</#marco>
+// index.ftl
+<#import "article.ftl" as article>
+<@article title="hello" content="world"/>
+
+2.6.1
+
+<!-- html -->
+<div class="top">1</div>
+<div class="bottom">2</div> 
+/* css */
+div {
+  background-color: lightgrey;
+  margin-bottom: 100px;
+  width: 100px;
+  height: 100px;
+}
+.bottom {
+  margin-top: 100px;
+}
+
+<!-- html -->
+<div class="wrap">
+  <div class="content">content</div>
+</div>
+/* css */
+body {
+  border: 1px solid #000
+}
+div {
+  height: 100px;
+  width: 100px;
+}
+.wrap {
+  background-color: lightblue;
+}
+.content {
+  background-color: pink;
+  margin-top: 100px;
+}
+
+<!-- html -->
+<div class="wrap">
+  <div class="float">I'm float</div>
+</div>
+<div class="content">content</div>
+/* css */
+body {
+  border: 1px solid #000;
+}
+.wrap {
+  background-color: lightblue;
+}
+.float {
+  float: left;
+  width: 100px;
+  height: 100px;
+  background-color: orange;
+}
+.content {
+  background-color: pink;
+}
+
+<!-- html -->
+<div class=”WB_frame”>
+...
+</div>
+/* css */
+.WB_frame {
+  width: 1000px;
+  margin: 0 auto;
+}
+
+<!-- html -->
+<div class=”wrap”>
+  <div class=”left”>...</div>
+  </div class=”main”>...</div>
+</div>
+/* css */
+.wrap {
+  font-size: 0;
+  padding-left: 100px;
+}
+.left {
+  display: inline-block;
+  font-size: 12px;
+  width: 100px;
+  margin-left: -100px;
+  vertical-align: top;
+}
+.main {
+  display: inline-block;
+  font-size: 14px;
+  vertical-align: top;
+}
+
+<!-- html -->
+<div class="wrap">
+  <div class="left">left</div>
+  <div class="main">main</div>
+  <div class="right">right</div>    
+</div>
+/*css*/
+.left {
+  background: red;
+  width: 100px;
+  margin-left: -100px;
+}
+.right {
+  background: green;
+  width: 200px;
+  margin-right: -200px;
+}
+.main {
+  background: blue;
+  width: 100%;
+}
+.left,.right,.main {
+  display: inline-block;
+  vertical-align: top;
+  font-size: 12px;
+}
+.wrap {
+  font-size: 0;
+  padding-left: 100px;
+  padding-right: 200px;
+}
+
+<!-- html -->
+<div class="wrap">
+  <div class="left">left</div>
+  <div class="right-wrap">
+    <div class="main">main</div>
+    <div class="right">right</div>      
+  </div>
+</div>
+/* css */
+.left {
+  background: red;
+  width: 100px;
+  margin-left: -100px;
+}
+.right {
+  background: green;
+  width: 200px;
+  margin-right: -200px;
+}
+.main {
+  background: blue;
+  width: 100%;
+}
+.left,.right,.main {
+  display: inline-block;
+  vertical-align: top;
+  font-size: 12px;
+}
+.wrap {
+  font-size: 0;
+  padding-left: 100px;
+  box-sizing: border-box;
+}
+.right-wrap {
+  font-size: 0;
+  display: inline-block;
+  padding-right: 200px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+2.6.2
+
+<!-- html -->
+<div class="wrap">
+  <div class="left">left</div>
+  <div class="main">main</div>
+  <div class="right">right</div>      
+</div>
+/*css*/
+.left {
+  background: red;
+  width: 100px;
+}
+.right {
+  background: green;
+  width: 200px;
+}
+.main {
+  background: blue;
+  width: calc(100% - 100px - 200px);
+}
+.left,.right,.main {
+  display: inline-block;
+  vertical-align: top;
+  font-size: 12px;
+}
+.wrap {
+  font-size: 0;
+}
+
+<!-- html -->
+<div class="left">left</div>
+<div class="right">right</div>
+/* css */
+.left {
+  float: left;
+  width: 100px;
+  background-color: red;
+}
+.right {
+  margin-left: 100px;
+  background-color: green;
+}
+
+<!-- html -->
+<div class="container">
+  <div class="center column">center</div>
+  <div class="left column">left</div>
+  <div class="right column">right</div>
+</div>
+/*css*/
+.container .column {
+  float: left;
+  position: relative;
+}
+.container {
+  padding-left: 200px;
+  padding-right: 150px;
+}
+.left {
+  width: 200px;     
+  margin-left: -100%;  
+  right: 200px; 
+  background-color: red;
+}
+.center {
+  width: 100%;
+  background-color: yellow;
+}
+.right {
+  width: 150px; 
+  margin-right: -150px; 
+  background-color: green;
+}
+
+<!--html-->
+<div class="container">
+  <div class="center-wrap column">
+    <div class="center">center</div>
+  </div>
+  <div class="left column">left</div>
+  <div class="right column">right</div>
+</div>
+/*css*/
+.container {
+  position: relative;
+}
+.column {
+  float: left;
+}
+.center-wrap {
+  width: 100%;
+}
+.center-wrap .center {
+  margin-left: 200px;
+  margin-right: 150px;
+  background-color: yellow;
+}
+.left {
+  width: 200px;
+  margin-left: -100%;
+  background-color: red;
+}
+.right {
+  width: 150px;
+  margin-left: -150px;
+  background-color: green;
+}
+
+2.6.3
+<!--html-->
+<div class="container">
+  <div class="item">main</div>
+</div>
+/*css*/
+.container {
+  display: flex;
+  background-color: lightgrey;
+  justify-content: center;
+}
+.item {
+  flex-basis: 1000px;
+  background-color: yellow;
+}
+
+<!--html-->
+<div class="container">
+  <div class="center">main</div>
+  <div class="left">left</div>
+</div>
+/*css*/
+.container {
+  display: flex;
+}
+.center {
+  flex-grow: 1;
+  background-color: yellow;
+  order: 1
+}
+.left {
+ background-color: red;
+ flex-basis: 200px;
+}
+
+<!--html-->
+<div class="container">
+  <div class="center">main</div>
+  <div class="left">left</div>
+  <div class="right">right</div>
+</div>
+/*css*/
+.container {
+  display: flex;
+}
+.center {
+  flex-grow: 1;
+  background-color: yellow;
+  order: 1
+}
+.left {
+  background-color: red;
+  flex-basis: 200px;
+}
+.right {
+  background-color: green;
+  flex-basis: 300px;
+  order: 2
+}
+
+2.7.2
+/* 属性样式 */
+.d-b {
+  display: block;
+}
+.d-ib {
+  display: inline-block;
+}
+/* 业务样式 */
+.wrap {
+  padding: 0 20px;
+}
+.v-wrap {
+  padding-bottom: 24px;
+  padding-top   : 24px;
+}
+
+/* prop.less */
+.d-b {
+  display: block;
+}
+.d-ib {
+  display: inline-block;
+}
+
+/* buss.less */
+.wrap {
+  padding: 0 20px;
+}
+.v-wrap {
+  padding-bottom: 24px;
+  padding-top   : 24px;
+}
+/* index.less */
+@import "prop.less"
+@import "buss.less"
+
+/* prop.styl */
+.d-b
+  display block
+.d-ib
+  display inline-block
+
+/* buss.styl */
+.wrap 
+  padding 0 20px
+.v-wrap
+  padding-bottom 24px
+  padding-top    24px
+
+/* index.styl */
+@import "prop.styl"
+@import "buss.styl"
+
+.btn-default {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+}
+.btn-primary {
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+
+// 变量
+@btn-default-color:              #333;
+@btn-default-bg:                 #fff;
+@btn-default-border:             #ccc;
+@btn-primary-color:              #fff;
+@btn-primary-bg:                 #337ab7;
+@btn-primary-border:             #2e6da4;
+// mixin
+.button-variant(@color; @background; @border) {
+  color: @color;
+  background-color: @background;
+  border-color: @border;
+}
+//生成样式
+.btn-default {
+  .button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
+}
+.btn-primary {
+  .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);
+}
+
+// 变量
+btn-default-color= #333
+btn-default-bg= #fff
+btn-default-border=#ccc
+btn-primary-color=#fff
+btn-primary-bg=#337ab7
+btn-primary-border=#2e6da4
+// mixin
+button-variant(color, background, border)
+  color color
+  background-color background
+  border-color border
+// 生成样式
+.btn-default
+  button-variant(btn-default-color,btn-default-bg,btn-default-border)
+.btn-primary
+  button-variant(btn-primary-color, btn-primary-bg, btn-primary-border)
+
+  2.7.3
+
+.wiki-pages {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+<form class="form form--theme-xmas form--simple">
+  <input class="form__input" type="text" />
+  <input class="form__submit form__submit--disabled" type="submit" />
+</form>
+
+/* Block */
+.form { }
+/* Modifier */
+.form--theme-xmas { }
+/* Modifier */
+.form--simple { }
+/* Element */
+.form__input { }
+/* Element */
+.form__submit { }
+/* Modifier */
+.form__submit--disabled { }
+
+<!-- Bootstrap -->
+<a class="btn btn-default">Default button</a>
+<!-- AMCSS -->
+<a am-Button>Default button</a>
+
+[am-Button] { }
+[am-Button~="primary"] {  }
+[am-Button~="large"] {  }
+
+<!-- html -->
+<form am-form="theme-xmas simple">
+  <input am-form-input type="text" />
+  <input am-form-submit="disabled" type="submit" />
+</form>
+/* CSS */
+[am-form]{ }
+[am-form~="theme-xmas"]{ }
+[am-form~="simple"]{ }
+[am-form-input]{ }
+[am-form-submit]{ }
+[am-form-submit~="disabled"]{ }
+
+<div class="h20 w60 bgwh"></div>
+
+.h20 {
+  height: 20px;
+}
+.w60 {
+  width: 60px;
+}
+.bgwh {
+  background-color:#fff;
+}
+
+.d-b {
+  display: block;
+}
+.d-ib {
+  display: inline-block;
+}
+.t-0 {
+  top: 0;
+}
+
+2.8.2
+
+// 在JavaScript中创建标签
+var dom = document.createElement("p");
+dom.innerText = "hello World";
+document.body.appendChild(dom);
+// 在JavaScript中创建样式
+var style = document.createElement('style');
+sheet.insertRule("header { float: left; opacity: 0.8; }", 1);
+document.head.appendChild(style);
+// 操作浏览器
+console.log(doucment.cookie)
+
+// 创建请求对象
+var xmlhttp = new XMLHttpRequest();
+// 处理请求返回值
+xmlhttp.onreadystatechange = function(){
+  if (xmlhttp.readyState==4 && xmlhttp.status==200){
+    alert(xmlhttp.responseText);
+  }
+}
+// 初始化请求
+xmlhttp.open("GET","/xxx",true);
+// 发送请求
+xmlhttp.send();
+
+<script>
+// 请求脚本后的回调函数
+var getData = function(data) {
+  console.log(data)
+}
+// 请求地址
+var url = "http://xxx/jsonp.js?id=1&callback=getData";
+// 创建script标签
+var script = document.createElement('script');
+script.setAttribute('src', url);
+document.getElementsByTagName('body')[0].appendChild(script);
+</script>
+
+//jsonp.js
+(function(){
+  getData(1234);
+}())
+
+2.8.3
+
+# 配置一个服务端
+server {
+  # 端口为2017
+  listen 2017;
+  # 配置根路径，资源文件请求将会在此目录下查找
+  root /usr/share/nginx/html;
+  # 网站根路径请求返回的文件
+  index index.html;
+  # 规则，对以”/api”开头的请求进行操作
+  location /api {
+    # 转发服务端地址
+    proxy_pass http://localhost:2018;
+  }
+}
+
+devServer: {
+  // 代理配置
+  proxy: {
+    // 代理规则，以/api/开头的请求将会进行转发
+    '/api/*': {
+      // 转发地址
+      target: 'http://localhost:5000'
+    }
+  }
+}

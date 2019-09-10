@@ -1,0 +1,40 @@
+// 引用ws模块
+const WebSocket = require(‘ws’)
+// 传入参数，创建WebSocket服务端
+const wsServer = new WebSocket.Server({port:1234})\
+
+// 创建HTTP服务端
+const http = require(‘http’)
+const server = new https.createServer()
+// 通过已有的HTTP服务端创建WebSocket服务端
+const wsServer4http = new WebSocket.Server({server})
+
+// 浏览器端
+// 建立WebSocket连接
+const ws = new WebSocket('ws://localhost');
+// 监听连接建立事件
+ws.addEventListener('open', () => {
+  // 发送数据
+  ws.send("I'm client");
+});
+// 监听接收消息事件
+ws.addEventListener('message', event => {
+  // 接收服务端消息
+  console.log(event.data); // I’m server 
+                            // I received: I’m client
+});
+// Node.js服务端
+// 引用ws模块
+const WebSocket = require('ws')
+// 创建WebSocket服务端
+const wss = new WebSocket.Server({port: 80})
+// 连接已经建立
+wss.on('connection', ws => {
+  // 监听消息事件
+  ws.on('message', message => {
+    // 向客户端发送消息
+    ws.send('I received: ' + message)
+  })
+  // 主动向客户端发送消息
+  ws.send("I'm server")
+}

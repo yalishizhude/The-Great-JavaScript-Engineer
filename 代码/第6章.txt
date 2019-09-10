@@ -1,0 +1,402 @@
+6.2
+
+function requestOkText(url) {
+  var request = new XMLHttpRequest();
+  // q模块的变量名为“Q”，通过Q创建defer对象
+  var deferred = Q.defer();
+  request.open("GET", url, true);
+  request.onerror = onerror;
+  request.send();
+  function onload() {
+    if (request.status === 200) {
+      // 执行成功并返回请求文本
+      deferred.resolve(request.responseText);
+    } else {
+      // 执行失败并返回错误
+      deferred.reject(new Error("Status code was " + request.status));
+    }
+  }
+  function onerror() {
+    // 执行失败并返回错误
+    deferred.reject(new Error("Can't XHR " + JSON.stringify(url)));
+  }
+  // 返回promise对象
+  return deferred.promise;
+}
+requestOkText("http://localhost:3000")
+.then(function (responseText) {
+  // 成功时的回调
+  console.log(responseText);
+}, function (error) {
+  // 失败时的回调
+  console.error(error);
+});
+
+function requestOkText(url) {
+  // 返回一个promise对象
+  return Q.Promise(function(resolve, reject,) {
+    var request = new XMLHttpRequest();
+    request.open("GET", url, true);
+    request.onload = onload;
+    request.onerror = onerror;
+    request.send();
+    function onload() {
+      if (request.status === 200) {
+        // 执行成功并返回请求文本
+        resolve(request.responseText);
+      } else {
+        // 执行失败并返回错误
+        reject(new Error("Status code was " + request.status));
+      }
+    }
+function onerror() {
+  // 执行失败并返回错误
+      reject(new Error("Can't XHR " + JSON.stringify(url)));
+    }
+  });
+}
+
+const promise = new Promise(function(resolve, reject) {
+  // 执行异步操作的代码
+  // ...
+  if (/* 异步操作成功 */){
+    resolve(result);
+  } else {
+    reject(error);
+  }
+});
+
+const async1 = () => new Promise((resolve, reject) => {
+  setTimeout(() => resolve(1), 1000)
+});
+const async2 = () => new Promise((resolve, reject) => {
+  setTimeout(() => resolve(2), 1000)
+});
+// 情况1，异步改为同步
+const sync12 = () => async1().then((result) => {
+  console.log(result);
+  return async2();
+}, (e) => console.error(e))
+.then((result) => {
+  console.log(result);
+}, (e) => console.error(e));
+sync12();
+/*
+// 输出结果：
+// 1s
+1
+// 2s
+2
+*/
+const async3 = () => new Promise(function(resolve, reject) {
+  setTimeout(function(){
+    resolve(3)
+  }, 1000)
+});
+const async4 = () => new Promise(function(resolve, reject) {
+  setTimeout(function(){
+    resolve(4)
+  }, 1000)
+});
+// 情况2，多个异步操作都结束时进行统一处理
+const async34 = () => Promise.all([async3(), async4()]).then(function(result){
+  console.log(result);
+}, function(e){
+  console.error(e);
+});
+async34();
+/*
+// 输出结果：
+// 1s
+[3,4]
+*/
+// 情况3，异步同步混合
+sync12().then(async34, (e) => console.error(e))
+.then(() => console.log('All done'), (e) => console.error(e));
+/*
+// 输出结果：
+// 1s
+1 
+// 2s
+2
+// 3s
+[3,4] 
+All done
+*/
+
+// 异步函数
+function asyncFn(it, url) {
+  setTimeout(function(){
+    it.next(url+'.com')
+  }, 1000)
+}
+// 处理函数
+function *handle() {
+  var result = yield asyncFn(it, 'www');
+  console.log('Result:'+result);
+}
+// 函数句柄
+var it = handle()
+it.next();
+
+function asyncFn(it, url) {
+  return new Promise((resolve, reject) => {
+    setTimeout(function(){
+      resolve(url+'.com')
+    }, 1000)
+  })
+}
+async function handle() {
+  var result = await asyncFn(it, 'www');
+  console.log('Result:'+result);
+}
+
+6.3.1
+
+// Java
+// 创建一个Animal类
+class Animal {
+    // 私有属性name
+    private String name;
+    // 公有方法set为私有属性name设置值
+    public void set(String name) {
+        this.name = name;
+    }
+    // 公有方法get返回私有属性name的值
+    public String get() {
+        return this.name;
+    }
+}
+// 编写测试类
+public class Test {
+    public static void main(String[] args) {
+        // 创建一个Animal对象animal
+        Animal animal = new Animal();
+        // 调用Animal类的公有函数设置animal对象的私有属性name值
+        animal.set("dog");
+        // 调用Animal类的公有函数获取animal对象的私有属性name值
+        System.out.println(animal.get()); // "dog"
+    }
+}
+// JavaScript(ECMAScript5) 
+// 创建Animal函数
+function Animal() {
+  // 设置私有变量name
+  var name = ''
+  // 创建公有函数set设置私有变量name的值
+  this.set = function(a) {
+    name = a
+  }
+  // 创建公有函数get来获取私有变量name的值
+  this.get = function() {
+    return name
+  }
+}
+// 创建Animal函数实例animal
+var animal = new Animal()
+// 调用animal的set函数，设置animal的私有变量name的值
+animal.set('dog')
+// 调用animal的get函数，获取animal的私有变量name的值
+console.log(animal.get()) // 'dog'
+// 私有变量，外部无法直接访问
+console.log(animal.name) // undefined
+
+6.3.2
+
+// 创建一个Dog函数
+function Dog() {
+  // 设置公有函数bark
+  this.bark = function() {
+    return 'wang wang wang!!!'
+  }
+}
+// 让Dog函数的原型对象指向Animal函数实例
+Dog.prototype = new Animal()
+// 创建一个Dog函数实例dog
+var dog = new Dog()
+// dog中没有set函数，调用原型对象中的set函数
+dog.set('dog')
+// dog中没有set函数，调用原型对象中的set函数
+dog.get() // 'dog'
+// 执行dog对象的bark函数
+dog.bark() // 'wang wang wang!!!'
+
+// 类Dog继承自类Animal
+class Dog extends Animal {
+    // 公有方法bark
+    public String bark() {
+        return "wang wang wang!!!";
+    }
+}
+// 测试类
+public class Test {
+    public static void main(String[] args) {
+        // 创建Dog类实例对象dog
+        Dog dog = new Dog();
+        // 调用继承自Animal类的set方法设置私有属性name的值
+        dog.set("dog");
+        // 调用继承自Animal类的set方法获取私有属性name的值
+        System.out.println(dog.get()); // "dog"
+        // 调用Dog类的bark方法
+        System.out.println(dog.bark()); // "wang wang wang!!!"
+    }
+}
+
+6.3.3
+
+// Java
+class Cat {
+    // 当输入字符串时，直接显示，我们暂时叫作bark1
+    public String bark(String sound) {
+        return sound;
+    }
+    // 当无输入时，输出默认字符串，我们暂时叫作bark2
+    public String bark() {
+        return "...";
+    }
+}
+// 编写测试类
+public class Test {
+    public static void main(String[] args) {
+        // 创建Cat类实例对象cat
+        Cat cat = new Cat();
+        // 调用bark函数，没有入参，所以调用bark2
+        System.out.println(cat.bark()); // "..."
+        // 调用bark函数，入参为"miao~"，所以调用bark1
+        System.out.println(cat.bark("miao~")); // "miao~"
+    }
+}
+
+// JavaScript
+// 创建Cat函数
+function Cat() {
+    // 创建函数bark
+    this.bark = function(sound) {
+        // 如果入参存在则返回，否则返回默认字符串
+        if(toString.call(sound)==='[object String]') {
+            return sound
+        } else {
+            return '...'
+        }
+    }
+}
+// 创建Cat函数实例
+var cat = new Cat()
+// 调用cat函数，没有入参，返回默认值
+console.log(cat.bark()) //"..."
+// 调用cat函数，返回入参'miao~'
+console.logcat.bark('miao~')) // "miao~"
+
+// TypeScript
+// 封装
+class Animal {
+    // 字符串类型的私有属性name
+    private name:string;
+    // 入参为字符串，返回值为空的公有函数set，设置私有属性name的值
+    public set(name:string):void {
+        this.name = name
+    }
+    // 入参为空，返回值为字符串的公有函数get，返回私有属性name的值
+    public get():string {
+        return this.name
+    }
+}
+// 继承
+class Dog extends Animal {
+    public bark():string {
+        return 'wang wang wang!!!'
+    }
+}
+// 多态
+class Cat {
+    // 声明公有函数bark，无入参，返回字符串
+    public bark():string
+    // 声明公有函数bark，入参字符串，返回字符串
+    public bark(sound:string):string
+    // 实现公有函数bark，可选入参字符串，返回字符串
+    public bark(sound?:string):string {
+        if(toString.call(sound)==='[object String]') {
+            return sound
+        } else {
+            return '...'
+        }
+    }
+}
+
+6.4
+
+// 创建命名空间Dog
+namespace Dog  {
+    // 命名空间内部变量name
+    let name:string = 'dog'
+    // 导出命名空间内部函数，返回内部变量name的值
+    export function callName ():string {
+        return name
+    }
+}
+// 创建命名空间Cat
+namespace Cat {
+    // 命名空间内部变量name
+    let name:string = 'cat'
+    // 导出命名空间内部函数，返回内部变量name的值
+    export function callName ():string {
+        return name
+    }
+}
+console.log(Dog.callName()) //dog
+console.log(Cat.callName()) // cat
+
+// Dog.ts
+// 创建或使用命名空间Animal
+namespace Animal  {
+    // 导出函数bark
+    export function bark ():string {
+        // 返回字符串"wang"
+        return 'wang'
+    }
+}
+// Cat.ts
+// 创建或使用命名空间Animal
+namespace Animal {
+    // 导出函数purr
+    export function purr ():string {
+        // 返回字符串"miao"
+        return 'miao'
+    }
+}
+// test.ts
+// 引用文件Dog.ts
+/// <reference path="Dog.ts" />
+// 引用文件Cat.ts
+/// <reference path="Cat.ts" />
+// 调用命名空间Animal的bark函数
+console.log(Animal.bark()) //dog
+// 调用命名空间Animal的purr函数
+console.log(Animal.purr()) // cat
+
+// D3.d.ts 部分摘录
+// 声明命名空间D3
+declare namespace D3 {
+    // 导出接口
+    export interface Selectors {
+        select: {
+	    // 函数接口，1个字符串入参，1个Slection对象返回值
+            (selector: string): Selection;
+            // 函数接口，1个EventTarget入参，1个Selection对象返回值
+            (element: EventTarget): Selection;
+        };
+    }
+    // 导出接口
+    export interface Event {
+        // 数字属性x
+        x: number;
+        // 数字属性y
+        y: number;
+    }
+    // 导出Base接口
+    export interface Base extends Selectors {
+        event: Event;
+    }
+}
+//声明变量d3
+declare var d3: D3.Base;

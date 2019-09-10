@@ -1,0 +1,126 @@
+22.1 
+
+// 显示进程消耗的内存
+var showV8Memory = function () {
+  // 调用系统函数获取内存使用情况
+  var memory = process.memoryUsage();
+  // 将byte 转换位 Mega Byte
+  var toMB = function (bytes) {
+    return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+  };
+  console.log('heapTotal: %s, heapUsed: %s', toMB(memory.heapTotal), toMB(memory.heapUsed));
+};
+// 分配内存
+var allocateMemory = function () {
+  // 每次创建100k长度的数组
+  var size = 100 * 1024;
+  var list = new Array(size);
+  // 数组每个元素分配占用1 byte的字符串
+  for(var i=0;i<size; i++){
+    list[i] = 'a'
+  }
+  return list;
+};
+// 保存变量，使内存不被回收
+var total = [];
+// 循环消耗内存，直到程序退出
+while(true) {
+  showV8Memory();
+  total.push(allocateMemory());
+}
+
+22.3.1
+
+// 创建缓存变量
+let cache = {};
+// 获取缓存数据
+let get = key => cache[key];
+// 存储缓存数据;
+let set = (key, value) => cache[key] = value;
+// 导出缓存函数
+export {get, set};
+
+// 计算函数
+let add = (a, b) => {
+  // 为了表示函数被调用
+  console.log('Add %d+%d', a, b);
+  // 返回计算结果
+  return a + b;
+}
+// 缓存函数
+var memAdd = _.memoize(add);
+// 第一次调用，调用函数并缓存
+console.log(memAdd(1,2));// Add 1+2 // 3
+// 第二次调用，直接使用缓存
+console.log(memAdd(1,2));// 3
+
+// 限制内存键值对最多为100
+const size = 100;
+// 创建缓存变量
+let cache = {};
+// 获取缓存数据
+let get = key => cache[key];
+// 存储缓存数据
+let set = (key, value) => {
+  // 读取缓存对象的key列表
+  let keys = Object.keys(cache);
+  // 如果超出缓存限制则清除最早的缓存记录
+  if(keys.length > size) {
+    console.warn('超出缓存记录数限制%s，清除部分缓存', size);
+    let firstKey =keys.shift();
+    delete cache[firstKey];
+  }
+  cache[key] = value;
+}
+// 导出缓存函数
+export {get, set};
+
+22.3.3
+
+http.createServer((req, res) => {
+  req.on('data', () => {
+    //监听事件event
+    emitter.addListener("event",function(){
+      console.log("事件触发，调用此回调函数");
+    });
+  });
+});
+
+// producer.js
+let list = [];
+let produce = () => {
+  list.push(new Array(10 * 1024 * 1024).join('#'));
+};
+module.exports = {produce}
+
+// app.js
+const producer = require('./producer');
+setInterval(() => {
+  producer.produce();
+}, 100);
+
+22.4
+
+const fs = require('fs');
+let readstream = fs.createReadStream('srcBigFile');
+let writestream = fs.createWriteStream('destBigFile');
+readstream.on('data', () => {
+  writestream.write('chunk');
+});
+readstream.on('end', () => {
+  writestream.end()
+})
+
+// producer.js
+let list = [];
+let produce = () => {
+  list.push(new Buffer(new Array(10 * 1024 * 1024).join('#')));
+};
+module.exports = {produce}
+
+// app.js
+const producer = require('./producer');
+setInterval(() => {
+  console.log(process.memoryUsage());
+  producer.produce();
+}, 100);

@@ -1,0 +1,124 @@
+8.1.1
+
+<!-- HTML -->
+<div class="usermotto">
+  <p class="user-motto">motto</p>
+</div>
+<!-- WXML -->
+<view class="usermotto">
+  <text class="user-motto">motto</text>
+</view>
+
+<!-- HTML -->
+<image onclick="bindViewTap" class="userinfo-avatar" src="images/user.png" background-size="cover"></image>
+<!-- WXML -->
+<image bindtap="bindViewTap" class="userinfo-avatar" src="../images/user.png" background-size="cover"></image>
+
+8.1.2
+
+<!-- 循环 -->
+<view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="i">
+  <view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="j">
+    <!-- 逻辑判断 -->
+<view wx:if="{{i <= j}}">
+  <!-- 数据绑定 -->
+      {{i}} * {{j}} = {{i * j}}
+    </view>
+  </view>
+</view>
+
+<!-- import模板 -->
+
+<!-- A.wxml -->
+<template name="A">
+  <text> A template </text>
+</template>
+
+<!-- B.wxml -->
+<import src="a.wxml"/>
+<template name="B">
+  <text> B template </text>
+</template>
+
+<!-- include模板 -->
+
+<!-- header.wxml -->
+<view> header </view>
+<!-- index.wxml -->
+<include src="header.wxml"/>
+
+8.2.2
+
+/** common.wxss **/
+.a {
+  padding:5px;
+}
+
+/** index.wxss **/
+@import "common.wxss";
+.p {
+  padding:15px;
+}
+
+8.4.1
+
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/index"
+  ],
+  "tabBar": {
+    "list": [{
+      "pagePath": "pages/index/index",
+      "text": "首页"
+    }, {
+      "pagePath": "pages/logs/logs",
+      "text": "日志"
+    }]
+  }
+}
+
+8.4.2
+
+{
+	"description": "a miniprogram project",
+	"setting": {
+		"urlCheck": false,
+		"es6": true,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"libVersion": "1.9.91",
+	"appid": "wxee40007e9b62f5d1",
+	"projectname": "mini project",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": -1,
+			"list": [
+				{
+					"id": 0,
+					"name": "登录",
+					"pathName": "pages/login/login",
+					"query": ""
+				}
+			]
+		}
+	}
+}

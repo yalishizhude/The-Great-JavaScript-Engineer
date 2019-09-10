@@ -1,0 +1,69 @@
+10.1
+
+wx.login({
+  success(res) {
+    wx.getUserInfo({
+      success(res) {
+        console.log(res.userInfo)
+      },
+      fail(e) {
+        console.error(e)
+      }
+    })
+  },
+  fail(e) {
+    console.error(e)
+  }
+})
+
+rxwx.login()
+  .switchMap(() => rxwx.getUserInfo())
+  .catch(e => console.error(e))
+  .subscribe(res => console.log(res.userInfo))
+
+try {
+  var value= wx.getStorageSync(°∞key°±);
+  if(value) {
+    todo(value);
+  } else {
+    undo()
+  }
+} catch(e) {
+  console.error(e);
+}
+
+wx.getStorage({
+  key: °∞key°±,
+  success: function(value) {
+if(value) {
+  todo(res);
+} else {
+  undo();
+}
+  },
+  fail: function(e) {
+    console.error(e);
+  }
+});
+
+// Õ¨≤Ω
+rxwx.getStorageSync('key')
+  .catch(function (e) { console.error(e); })
+  .subscribe(function (value) {
+    if (value) {
+      todo (value);
+    } else {
+      undo();
+    }
+  })
+// “Ï≤Ω
+rxwx.getStorage({ key: 'key' })
+  .map(function (obj) { return obj.data; })
+  .catch(function (e) { console.error(e); })
+  .subscribe(function (value) {
+    if (value) {
+      todo (value);
+    } else {
+      undo();
+    }
+  })

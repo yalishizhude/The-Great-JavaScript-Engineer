@@ -1,0 +1,130 @@
+24.2.1
+
+// app.js
+const debug = require('debug')('http');
+const http = require('http');
+http.createServer((req, res) => {
+  debug(req.method + ' ' + req.url);
+  res.end('hello\n');
+}).listen(3000, () => {
+  debug('listening');
+});
+
+24.3.2
+
+// context.js
+'use strict';
+const request = require('supertest');
+const assert = require('assert');
+const Koa = require('../..');
+describe('app.context', () => {
+  const app1 = new Koa();
+  app1.context.msg = 'hello';
+  const app2 = new Koa();
+  it('should merge properties', () => {
+    app1.use((ctx, next) => {
+      assert.equal(ctx.msg, 'hello');
+      ctx.status = 204;
+    });
+    return request(app1.listen())
+      .get('/')
+      .expect(204);
+  });
+  it('should not affect the original prototype', () => {
+    app2.use((ctx, next) => {
+      assert.equal(ctx.msg, undefined);
+      ctx.status = 204;
+    });
+    return request(app2.listen())
+      .get('/')
+      .expect(204);
+  });
+});
+
+24.3.3
+
+// controller.test.js
+// 引入ava模块
+const test = require('ava');
+// 引入controller模块
+const ctrl = require('./controller');
+// 以回调形式测试controller模块的getRequest函数
+test.cb('ctrl.getRequest', t => {
+  // 创建一个response实例对象
+  const res = {
+    setHeader: (key, value) => { // 重写setHeader函数
+      // 参数断言
+      t.is(key, 'Content-Type');
+      t.is(value, 'application/json');
+      // 执行下一步
+      t.pass();
+    },
+    writeHeader: (statusCode, statusText) => {
+      t.is(statusCode, 200);
+      t.is(statusText, 'GOOD');
+      t.pass();
+    },
+    write: (str) => {
+      t.is(str, JSON.stringify(req));
+      t.pass();
+    },
+    end: () => {
+      t.pass();
+      // 调用end函数，执行完成
+      t.end();
+    } 
+  };
+  const req = {
+    url: '/',
+    method: 'GET',
+    headers: {},
+    body: {}
+  }
+  ctrl.getRequest(req, res)
+})
+
+24.3.4
+
+// index.js
+module.exports = function self(n) {
+    if (n < 0) return NaN;
+    if (n === 0) return 1;
+    return n * self(n - 1);
+};
+// bdd.js
+var factorial = require('../index');
+describe('Test', function (){
+    describe('#factorial()', function (){
+        it('0的阶乘是1', function (){
+            factorial(0).should.equal(1);
+        });
+        it('1的阶乘是1', function (){
+            factorial(1).should.equal(1);
+        });
+        it('2的阶乘是2', function (){
+            factorial(2).should.equal(2);
+        });
+        it('3的阶乘是6', function (){
+            factorial(3).should.equal(6);
+        });
+    });
+});
+// tdd.js
+var assert = require('assert');
+var factorial = require('../index');
+suite('Test', function (){
+    suite('#factorial()', function (){
+        test('集合长度为0时等于1', function (){
+            assert.equal(1, factorial(0));
+        });
+        test('集合长度为1时等于1', function (){
+            assert.equal(1, factorial(1));
+        });
+        test('集合长度为2时等于2', function (){
+            assert.equal(2, factorial(2));
+        });
+        test('集合长度为3时等于6', function (){
+            assert.equal(6, factorial(3));
+        });
+    });
+});
